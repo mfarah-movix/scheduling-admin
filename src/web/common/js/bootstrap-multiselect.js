@@ -36,7 +36,6 @@
 		};
 	}
 
-
 	function Multiselect(select, options) {
 		
 		this.options = this.getOptions(options);
