@@ -1,8 +1,0 @@
-*.class
-
-# Package Files #
-*.jar
-*.war
-*.ear
-scheduling-admin.iml
-.idea
