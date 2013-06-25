@@ -24,14 +24,13 @@
 				"sPaginationType": "bootstrap",
 				"bAutoWidth": false, // Disable the auto width calculation 
 				"aoColumns": [
-					{ "sWidth": "8%" },
-					{ "sWidth": "7%" },
-					{ "sWidth": "7%" },
-					{ "sWidth": "22%"},
-					{ "sWidth": "7%"},
-					{ "sWidth": "7%"},
-					{ "sWidth": "28%"},
-					{ "sWidth": "14%"}
+					{ "sWidth": "10%" },
+					{ "sWidth": "5%" },
+					{ "sWidth": "20%" },
+					{ "sWidth": "5%"},
+					{ "sWidth": "10%"},
+					{ "sWidth": "35%"},
+					{ "sWidth": "15%"}
 				]
 			});
 			$.extend( $.fn.dataTableExt.oStdClasses, {
@@ -104,7 +103,6 @@
 		<tr>
 	        <th>Operador</th>
 	        <th>Producto</th>
-	        <th>ProductId</th>
 	        <th>SP</th>
 	        <th>Tipo</th>
 	        <th>Días</th>
@@ -117,11 +115,22 @@
 		<tr class="odd_gradeA">
 	        <td>${event.getOperador().toString()}</td>
 			<td>${event.getProducto()}</td>
-	        <td>${event.getProductId()}</td>
-	        <td>${event.getSP() }</td>
+	        <td>${event.getSp() }</td>
 	        <td>${event.getTipo() }</td>
-	        <td>${event.getDias() }</td>
-	        <td>${event.getHorario() }</td>
+	        <td>
+	        	<ul style="list-style-type: none; padding: 0;margin: 0;">
+		        <c:forEach var="dia" items="${event.getDias()}">
+		        	<li>${dia.key}</li>
+		        </c:forEach>
+	        	</ul>
+	        </td>
+	        <td>
+	        	<ul style="list-style-type: none; padding: 0;margin: 0;">
+		        <c:forEach var="dia" items="${event.getDias()}">
+		        	<li>${dia.value}</li>
+		        </c:forEach>
+	        	</ul>
+	        </td>
 	        <td><i class="icon-ok-sign icon-large"></i></td>
 		</tr>
 		</c:forEach>

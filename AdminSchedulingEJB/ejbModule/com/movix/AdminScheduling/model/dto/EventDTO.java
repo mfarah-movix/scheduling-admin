@@ -1,5 +1,7 @@
 package com.movix.AdminScheduling.model.dto;
 
+import java.util.Map;
+
 import com.movix.shared.Operador;
 
 public class EventDTO {
@@ -8,22 +10,24 @@ public class EventDTO {
 	private String producto;
 	private int productId;
 	private String sp;
+	private String tipo;
 	private String key;
-	private String dias;
-	private String horario;
+	Map<String, String> dias;
 
-	
+	public EventDTO(){
+		
+	}
 	public EventDTO(int id, Operador operador, String producto, int productId,
-			String sp, String key, String dias, String horario) {
+			String sp, String tipo, String key, Map<String, String> dias, String horario) {
 		super();
 		this.id = id;
 		this.operador = operador;
 		this.producto = producto;
 		this.productId = productId;
 		this.sp = sp;
+		this.tipo = tipo;
 		this.key = key;
 		this.dias = dias;
-		this.horario = horario;
 	}
 	public int getId() {
 		return id;
@@ -55,23 +59,23 @@ public class EventDTO {
 	public void setSp(String sp) {
 		this.sp = sp;
 	}
+	public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
 	public String getKey() {
 		return key;
 	}
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public String getDias() {
+	public Map<String, String> getDias() {
 		return dias;
 	}
-	public void setDias(String dias) {
+	public void setDias(Map<String, String> dias) {
 		this.dias = dias;
-	}
-	public String getHorario() {
-		return horario;
-	}
-	public void setHorario(String horario) {
-		this.horario = horario;
 	}
 	
 	@Override
