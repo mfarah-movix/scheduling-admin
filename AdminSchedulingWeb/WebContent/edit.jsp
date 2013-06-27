@@ -8,7 +8,7 @@
 	<meta charset="utf-8">
 	<title>Admin SP</title>
 	
-	<!-- CSS -->
+		<!-- CSS -->
 	<link href="css/demo_page.css" rel="stylesheet" type="text/css" />
 	<link href="css/demo_table.css" rel="stylesheet" type="text/css" />      
 	<link href="css/demo_table_jui.css" rel="stylesheet" type="text/css" />
@@ -19,27 +19,7 @@
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
 	<script type="text/javascript" charset="utf-8">
 		$(document).ready( function () {
-			oTable = $('#example').dataTable({
-				"sDom" : 'rtlp<"clear">',
-				"sPaginationType": "bootstrap",
-				"bAutoWidth": false, // Disable the auto width calculation 
-				"aoColumns": [
-					{ "sWidth": "10%" },
-					{ "sWidth": "5%" },
-					{ "sWidth": "20%" },
-					{ "sWidth": "5%"},
-					{ "sWidth": "10%"},
-					{ "sWidth": "35%"},
-					{ "sWidth": "15%"}
-				]
-			});
-			$.extend( $.fn.dataTableExt.oStdClasses, {
-			    "sWrapper": "dataTables_wrapper form-inline"
-			} );
-			
-			$('#search-box').keyup(function() {
-				oTable.fnFilter( $(this).val() );
-			});
+
 		} );
 		
 	</script>
@@ -92,51 +72,70 @@
             <li><a href="#">Falta Aprobación</a></li>
             <li><a href="#">Historial</a></li>
         </ul>
-        <form class="navbar-search pull-right">
-            <input id="search-box" type="text" class="search-query" placeholder="Search">
-        </form>
     </div>
 </div>
 
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
-	<thead>
-		<tr>
-	        <th>Operador</th>
-	        <th>Producto</th>
-	        <th>SP</th>
-	        <th>Tipo</th>
-	        <th>Días</th>
-	        <th>Horario</th>
-	        <th>Acciones</th>
-		</tr>
-	</thead>
-	<tbody>
-		<c:forEach var="event" items="${events}">
-		<tr class="odd_gradeA">
-	        <td>${event.getOperador().toString()}</td>
-			<td>${event.getProducto()}</td>
-	        <td>${event.getSp() }</td>
-	        <td>${event.getTipo() }</td>
-	        <td>
-	        	<ul style="list-style-type: none; padding: 0;margin: 0;">
-		        <c:forEach var="dia" items="${event.getDias()}">
-		        	<li>${dia.key}</li>
-		        </c:forEach>
-	        	</ul>
-	        </td>
-	        <td>
-	        	<ul style="list-style-type: none; padding: 0;margin: 0;">
-		        <c:forEach var="dia" items="${event.getDias()}">
-		        	<li>${dia.value}</li>
-		        </c:forEach>
-	        	</ul>
-	        </td>
-	        <td><i class="icon-ok-sign icon-large"></i></td>
-		</tr>
-		</c:forEach>
+<fieldset>
+	<form class="form-inline">
+		<div>
+			<div class="span2" style="float:left;">
+				<label>Operador</label>
+				<select>
+					<option value="1">ENTEL</option>
+				</select>
+			</div>
+			<div class="span2" style="float:left;">
+				<label>Producto</label>
+				<select >
+					<option value="1">SUS</option>
+				</select>
+			</div>
 		
-	</tbody>
-</table>
+			<div class="span3" style="float:left;">
+				<label>ServicioPrecio</label>
+				<input type="text" />
+			</div>
+		
+			<div class="span1" style="float:left;">
+				<label>Tipo</label>
+				<select>
+					<option value="1">Cobro</option>
+				</select>
+			</div>
+		
+			<div class="span2" style="float:left;">
+				<label>Estado</label>
+				<select disabled="disabled">
+					<option value="1">Activo</option>
+				</select>
+			</div>
+		
+			<div class="span3" style="float:left;">
+				<label>Comentario</label>
+				<input type="text" />
+			</div>
+		</div>
+	
+		<div style="clear:left;">
+		</div>
+	
+		<hr>
+		<div>
+			<div style="width:200px; float:left;">
+				<div>
+					<label>Días</label>
+					<select>
+						<option>LU a DO</option>
+					</select>
+				</div>
+				<a style="position: absolute; margin-left: auto; margin-right: auto;">Eliminar</a>
+	
+			</div>
+			Mismo día
+		</div>
+	</form>
+</fieldset>
+
 <div class="myFooter">
    Movix - 2013
 </div>

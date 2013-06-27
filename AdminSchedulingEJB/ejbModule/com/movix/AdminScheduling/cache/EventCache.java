@@ -31,76 +31,36 @@ public class EventCache {
 	}
 
 	public List<EventDTO> getEvents(){
+		String a1 = "LU,MA,SA,DO";
+		String a2 = "LU,MA,MI,VI,DO";
+		String a3 = "LU,MA,VI,SA,DO";
+		System.out.println(a1 + "=>" + getShortDays(a1));
+		System.out.println(a2 + "=>" + getShortDays(a2));
+		System.out.println(a3 + "=>" + getShortDays(a3));
 		List<EventDTO> events = new ArrayList<EventDTO>();
 		ISchedulingService schedulingService = ServiceUtil.getService(ISchedulingService.class,
-	            "http://scheduling-service.movixla.com/scheduling/rest/ejb");
+	            "http://scheduling-service/scheduling/rest/ejb");
 		List<SchedulingEntryPro> schedulingEntries = schedulingService.getSchedulingEntriesPro();
-//		List<SchedulingEntryPro> schedulingEntries = new ArrayList<SchedulingEntryPro>();
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d0-h0-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "LU", "15:00", "17:00", "-1"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d0-h1-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "17:00", "19:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d0-h0-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d0-h2-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "19:00", "21:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d0-h1-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d0-h3-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "21:00", "23:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d0-h2-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d0-h4-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "23:00", "01:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d0-h3-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d0-h5-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "01:00", "02:30", "SUS:29:sus3_TigoSV_77321/0.19:_:d0-h4-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d0-h6-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "02:30", "03:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d0-h5-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d1-h0-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "MA", "15:00", "17:00", "-1"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d1-h1-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "17:00", "19:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d1-h0-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d1-h2-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "19:00", "21:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d1-h1-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d1-h3-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "21:00", "23:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d1-h2-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d1-h4-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "23:00", "01:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d1-h3-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d1-h5-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "01:00", "02:30", "SUS:29:sus3_TigoSV_77321/0.19:_:d1-h4-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d1-h6-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "02:30", "03:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d1-h5-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d2-h0-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "MI", "15:00", "17:00", "-1"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d2-h1-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "17:00", "19:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d2-h0-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d2-h2-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "19:00", "21:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d2-h1-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d2-h3-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "21:00", "23:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d2-h2-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d2-h4-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "23:00", "01:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d2-h3-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d2-h5-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "01:00", "02:30", "SUS:29:sus3_TigoSV_77321/0.19:_:d2-h4-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d2-h6-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "02:30", "03:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d2-h5-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d3-h0-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "JU", "15:00", "17:00", "-1"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d3-h1-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "17:00", "19:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d3-h0-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d3-h2-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "19:00", "21:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d3-h1-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d3-h3-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "21:00", "23:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d3-h2-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d3-h4-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "23:00", "01:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d3-h3-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d3-h5-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "01:00", "02:30", "SUS:29:sus3_TigoSV_77321/0.19:_:d3-h4-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d3-h6-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "02:30", "03:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d3-h5-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d4-h0-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "VI", "15:00", "17:00", "-1"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d4-h1-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "17:00", "19:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d4-h0-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d4-h2-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "19:00", "21:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d4-h1-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d4-h3-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "21:00", "23:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d4-h2-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d4-h4-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "23:00", "01:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d4-h3-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d4-h5-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "01:00", "02:30", "SUS:29:sus3_TigoSV_77321/0.19:_:d4-h4-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d4-h6-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "02:30", "03:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d4-h5-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d5-h0-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "SA", "15:00", "17:00", "-1"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d5-h1-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "17:00", "19:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d5-h0-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d5-h2-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "19:00", "21:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d5-h1-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d5-h3-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "21:00", "23:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d5-h2-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d5-h4-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "23:00", "01:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d5-h3-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d5-h5-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "01:00", "02:30", "SUS:29:sus3_TigoSV_77321/0.19:_:d5-h4-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d5-h6-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "02:30", "03:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d5-h5-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d6-h0-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "DO", "15:00", "17:00", "-1"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d6-h1-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "17:00", "19:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d6-h0-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d6-h2-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "19:00", "21:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d6-h1-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d6-h3-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "21:00", "23:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d6-h2-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d6-h4-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+0d", "23:00", "01:00", "SUS:29:sus3_TigoSV_77321/0.19:_:d6-h3-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:29:sus3_TigoSV_77321/0.19:_:d6-h5-SENDING", Type.SENDING, "SUS", 29, "sus3_TigoSV_77321/0.19", "NULL", "NULL", "+1d", "01:00", "02:30", "SUS:29:sus3_TigoSV_77321/0.19:_:d6-h4-SENDING"));
-//		schedulingEntries.add(new SchedulingEntryPro("SUS:8:sus3_MovPE_7700_cobro_SAT_MARGINAL/1.0:_:d6-h3-CHARGE", Type.CHARGE, "SUS", 29, "sus3_MovPE_7700_cobro_SAT_MARGINAL/1.0", "NULL", "NULL", "LU", "01:15", "02:15", "SUS:8:sus3_MovPE_7700_cobro_SAT_MARGINAL/1.0:_:d6-h2-CHARGE"));
 		
 		SchedulingEntryPro last = new SchedulingEntryPro();
-		String hourSchedule = "", lastDay = "";
-		if(!schedulingEntries.isEmpty()){
-			last = schedulingEntries.get(0);
-			lastDay = last.getDayPattern();
-		}
+		String hourSchedule = "", lastDay = "", lastServicePrice = "";
 		EventDTO newEvent = new EventDTO();
 		BiMap<String, String> daysMap = HashBiMap.create(7);
+		boolean first = true;
 		for(SchedulingEntryPro entry : schedulingEntries){
-			if(!last.getServicePrice().equals(entry.getServicePrice())){
+			lastServicePrice = last.getServicePrice() == null ? "Todos" : last.getServicePrice();
+			if(first){
+				last = entry;
+				lastDay = entry.getDayPattern();
+				first = false;
+			}
+			if(mustCreateEvent(last.getKey(), entry.getKey())){
 				if(!daysMap.containsValue(hourSchedule)){
 					daysMap.put(lastDay, hourSchedule);
 				} else {
 					String oldKey = daysMap.inverse().get(hourSchedule);
-					String newKey = oldKey + ", " + lastDay;
+					String newKey = oldKey + "," + lastDay;
+					newKey = getShortDays(newKey);
 					daysMap.remove(oldKey);
 					daysMap.put(newKey, hourSchedule);
 				}
@@ -108,10 +68,10 @@ public class EventCache {
 				newEvent.setKey(last.getKey());
 				newEvent.setOperador(Operador.getOperadorPorIdBD(last.getOperator()));
 				newEvent.setProducto(last.getProduct());
-				newEvent.setSp(last.getServicePrice());
+				newEvent.setSp(lastServicePrice);
 				newEvent.setTipo(last.getKey().substring(last.getKey().lastIndexOf("-") + 1));
 				events.add(newEvent);
-				lastDay = last.getDayPattern();
+				lastDay = entry.getDayPattern();
 				hourSchedule = entry.getStart() + " - " + entry.getEnd();
 				newEvent = new EventDTO();
 				daysMap = HashBiMap.create(7);
@@ -125,7 +85,7 @@ public class EventCache {
 							daysMap.put(lastDay, hourSchedule);
 						} else {
 							String oldKey = daysMap.inverse().get(hourSchedule);
-							String newKey = oldKey + ", " + lastDay;
+							String newKey = oldKey + "," + lastDay;
 							daysMap.remove(oldKey);
 							daysMap.put(newKey, hourSchedule);
 						}
@@ -149,7 +109,8 @@ public class EventCache {
 			daysMap.put(lastDay, hourSchedule);
 		} else {
 			String oldKey = daysMap.inverse().get(hourSchedule);
-			String newKey = oldKey + ", " + lastDay;
+			String newKey = oldKey + "," + lastDay;
+			newKey = getShortDays(newKey);
 			daysMap.remove(oldKey);
 			daysMap.put(newKey, hourSchedule);
 		}
@@ -185,5 +146,66 @@ public class EventCache {
 		}
 		lastUpdate = new Date();
 		cache.refresh(everythingKey);
+	}
+	
+	private boolean mustCreateEvent(String lastKey, String entryKey){
+		boolean different = false;
+		String[] lastKeyTokens = lastKey.split(":");
+		String[] entryKeyTokens = entryKey.split(":");
+		for(int i = 0; i < lastKeyTokens.length; i++){
+			if(i == lastKeyTokens.length - 1){
+				lastKeyTokens[i] = lastKeyTokens[i].replaceAll("[0-9]","");
+				entryKeyTokens[i] = entryKeyTokens[i].replaceAll("[0-9]","");
+			}
+			if(!lastKeyTokens[i].equals(entryKeyTokens[i])){
+				different = true;
+			}
+		}
+		return different;
+	}
+	
+	private String getShortDays(String days){
+		if(days.length() == 0){
+			return "";
+		}
+		String shortDays = "";
+		int i = 0, initial = -1;
+		String[] daysTokens = days.split(",");
+		for(i = 0; i < daysPatterns.length; i++){
+			boolean exists = false;
+			for(int j = 0; j < daysTokens.length; j++){
+				if(daysTokens[j].equals(daysPatterns[i])){
+					exists = true;
+					break;
+				}
+			}
+			if(exists){
+				if(initial == -1){
+					initial = i;					
+				}
+			}
+			if(initial >= 0 && !exists){
+				if(i - initial == 1){
+					shortDays += daysPatterns[i - 1];
+				} else if(i - initial == 2){
+					shortDays += daysPatterns[i - 2] + ", " + daysPatterns[i - 1]; 
+				} else {
+					shortDays += daysPatterns[initial] + " a " + daysPatterns[i - 1];
+				}
+				shortDays += ", ";
+				initial = -1;
+			}
+		}
+		if(initial >= 0){
+			if(i - initial == 1){
+				shortDays += daysPatterns[i - 1];
+			} else if(i - initial == 2){
+				shortDays += daysPatterns[i - 2] + ", " + daysPatterns[i - 1]; 
+			} else {
+				shortDays += daysPatterns[initial] + " a " + daysPatterns[i - 1];
+			}
+			shortDays += ", ";
+		}
+		return shortDays.substring(0, shortDays.length() - 2);
 	}
 }
