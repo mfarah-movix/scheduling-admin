@@ -31,12 +31,6 @@ public class EventCache {
 	}
 
 	public List<EventDTO> getEvents(){
-		String a1 = "LU,MA,SA,DO";
-		String a2 = "LU,MA,MI,VI,DO";
-		String a3 = "LU,MA,VI,SA,DO";
-		System.out.println(a1 + "=>" + getShortDays(a1));
-		System.out.println(a2 + "=>" + getShortDays(a2));
-		System.out.println(a3 + "=>" + getShortDays(a3));
 		List<EventDTO> events = new ArrayList<EventDTO>();
 		ISchedulingService schedulingService = ServiceUtil.getService(ISchedulingService.class,
 	            "http://scheduling-service/scheduling/rest/ejb");
@@ -55,22 +49,8 @@ public class EventCache {
 				first = false;
 			}
 			if(mustCreateEvent(last.getKey(), entry.getKey())){
-				if(!daysMap.containsValue(hourSchedule)){
-					daysMap.put(lastDay, hourSchedule);
-				} else {
-					String oldKey = daysMap.inverse().get(hourSchedule);
-					String newKey = oldKey + "," + lastDay;
-					newKey = getShortDays(newKey);
-					daysMap.remove(oldKey);
-					daysMap.put(newKey, hourSchedule);
-				}
-				newEvent.setDias(daysMap);
-				newEvent.setKey(last.getKey());
-				newEvent.setOperador(Operador.getOperadorPorIdBD(last.getOperator()));
-				newEvent.setProducto(last.getProduct());
-				newEvent.setSp(lastServicePrice);
-				newEvent.setTipo(last.getKey().substring(last.getKey().lastIndexOf("-") + 1));
-				events.add(newEvent);
+				putScheduleInMap(hourSchedule, lastDay, daysMap);
+				addNewEvent(events, last, lastServicePrice, newEvent, daysMap);
 				lastDay = entry.getDayPattern();
 				hourSchedule = entry.getStart() + " - " + entry.getEnd();
 				newEvent = new EventDTO();
@@ -81,14 +61,7 @@ public class EventCache {
 					if(dayPattern.equals(lastDay)){
 						hourSchedule += entry.getStart() + " - " + entry.getEnd();
 					} else {
-						if(!daysMap.containsValue(hourSchedule)){
-							daysMap.put(lastDay, hourSchedule);
-						} else {
-							String oldKey = daysMap.inverse().get(hourSchedule);
-							String newKey = oldKey + "," + lastDay;
-							daysMap.remove(oldKey);
-							daysMap.put(newKey, hourSchedule);
-						}
+						putScheduleInMap(hourSchedule, lastDay, daysMap);
 						hourSchedule = entry.getStart() + " - " + entry.getEnd();
 					}
 					lastDay = dayPattern;
@@ -105,24 +78,39 @@ public class EventCache {
 			last = entry;
 		}
 		lastDay = last.getDayPattern();
+		putScheduleInMap(hourSchedule, lastDay, daysMap);
+		addNewEvent(events, last, lastServicePrice, newEvent, daysMap);
+		return events;
+	}
+
+	private void putScheduleInMap(String hourSchedule, String lastDay,
+			BiMap<String, String> daysMap) {
 		if(!daysMap.containsValue(hourSchedule)){
 			daysMap.put(lastDay, hourSchedule);
 		} else {
-			String oldKey = daysMap.inverse().get(hourSchedule);
-			String newKey = oldKey + "," + lastDay;
-			newKey = getShortDays(newKey);
-			daysMap.remove(oldKey);
-			daysMap.put(newKey, hourSchedule);
+			updateKeyAndPut(hourSchedule, lastDay, daysMap);
 		}
-		hourSchedule = last.getStart() + " - " + last.getEnd();
+	}
+
+	private void addNewEvent(List<EventDTO> events, SchedulingEntryPro last,
+			String lastServicePrice, EventDTO newEvent,
+			BiMap<String, String> daysMap) {
 		newEvent.setDias(daysMap);
 		newEvent.setKey(last.getKey());
 		newEvent.setOperador(Operador.getOperadorPorIdBD(last.getOperator()));
 		newEvent.setProducto(last.getProduct());
-		newEvent.setSp(last.getServicePrice());
+		newEvent.setSp(lastServicePrice);
 		newEvent.setTipo(last.getKey().substring(last.getKey().lastIndexOf("-") + 1));
 		events.add(newEvent);
-		return events;
+	}
+
+	private void updateKeyAndPut(String hourSchedule, String lastDay,
+			BiMap<String, String> daysMap) {
+		String oldKey = daysMap.inverse().get(hourSchedule);
+		String newKey = oldKey + "," + lastDay;
+		newKey = getShortDays(newKey);
+		daysMap.remove(oldKey);
+		daysMap.put(newKey, hourSchedule);
 	}
 
 	public List<EventDTO> get(String key) throws ExecutionException{
@@ -179,33 +167,29 @@ public class EventCache {
 					break;
 				}
 			}
-			if(exists){
-				if(initial == -1){
-					initial = i;					
-				}
+			if(exists && initial == -1){
+				initial = i;
 			}
 			if(initial >= 0 && !exists){
-				if(i - initial == 1){
-					shortDays += daysPatterns[i - 1];
-				} else if(i - initial == 2){
-					shortDays += daysPatterns[i - 2] + ", " + daysPatterns[i - 1]; 
-				} else {
-					shortDays += daysPatterns[initial] + " a " + daysPatterns[i - 1];
-				}
-				shortDays += ", ";
+				shortDays = concatShortDays(shortDays, i, initial);
 				initial = -1;
 			}
 		}
 		if(initial >= 0){
-			if(i - initial == 1){
-				shortDays += daysPatterns[i - 1];
-			} else if(i - initial == 2){
-				shortDays += daysPatterns[i - 2] + ", " + daysPatterns[i - 1]; 
-			} else {
-				shortDays += daysPatterns[initial] + " a " + daysPatterns[i - 1];
-			}
-			shortDays += ", ";
+			shortDays = concatShortDays(shortDays, i, initial);
 		}
 		return shortDays.substring(0, shortDays.length() - 2);
+	}
+
+	private String concatShortDays(String shortDays, int i, int initial) {
+		if(i - initial == 1){
+			shortDays += daysPatterns[i - 1];
+		} else if(i - initial == 2){
+			shortDays += daysPatterns[i - 2] + ", " + daysPatterns[i - 1]; 
+		} else {
+			shortDays += daysPatterns[initial] + " a " + daysPatterns[i - 1];
+		}
+		shortDays += ", ";
+		return shortDays;
 	}
 }
