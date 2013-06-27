@@ -13,11 +13,5 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/Users/mafarah/Work/jars/ldap-1.0.0.jar"/>
-	<classpathentry kind="lib" path="/Users/mafarah/Work/jars/movix-dev-shared-3.9.3.jar"/>
-	<classpathentry kind="lib" path="/Users/mafarah/Work/jars/movix-service-sp-client-0.1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/mafarah/Work/scheduling-admin/AdminSchedulingEJB.jar"/>
-	<classpathentry exported="true" kind="lib" path="/srv/produccion/jboss-eap-6.0/modules/org/hibernate/main/hibernate-core-4.1.3.Final-redhat-1.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/mafarah/Work/jars/guava-14.0.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
