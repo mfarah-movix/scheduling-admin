@@ -11,9 +11,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.movix.AdminScheduling.model.dto.EventDTO;
 import com.movix.shared.Operador;
-import com.movixla.service.scheduling.common.ISchedulingService;
 import com.movixla.service.scheduling.common.SchedulingEntryPro;
-import com.movixla.shared.util.ServiceUtil;
+import com.movixla.service.scheduling.client.SchedulingClient;
 
 public class EventCache {
 
@@ -32,9 +31,8 @@ public class EventCache {
 
 	public List<EventDTO> getEvents(){
 		List<EventDTO> events = new ArrayList<EventDTO>();
-		ISchedulingService schedulingService = ServiceUtil.getService(ISchedulingService.class,
-	            "http://scheduling-service/scheduling/rest/ejb");
-		List<SchedulingEntryPro> schedulingEntries = schedulingService.getSchedulingEntriesPro();
+		SchedulingClient schedulingClient = SchedulingClient.getInstance();
+		List<SchedulingEntryPro> schedulingEntries = schedulingClient.getEntries();
 		
 		SchedulingEntryPro last = new SchedulingEntryPro();
 		String hourSchedule = "", lastDay = "", lastServicePrice = "";
