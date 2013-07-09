@@ -1,8 +1,10 @@
 package com.movix.AdminScheduling.model.dto;
 
-import java.util.Map;
+import java.util.List;
 
+import com.google.common.collect.BiMap;
 import com.movix.shared.Operador;
+import com.movixla.service.scheduling.common.SchedulingEntryPro;
 
 public class EventDTO {
 	private int id;
@@ -12,13 +14,14 @@ public class EventDTO {
 	private String sp;
 	private String tipo;
 	private String key;
-	Map<String, String> dias;
+	BiMap<String, String> dias;
+	List<SchedulingEntryPro> entries;
 
 	public EventDTO(){
 		
 	}
 	public EventDTO(int id, Operador operador, String producto, int productId,
-			String sp, String tipo, String key, Map<String, String> dias, String horario) {
+			String sp, String tipo, String key, BiMap<String, String> dias, String horario) {
 		super();
 		this.id = id;
 		this.operador = operador;
@@ -71,13 +74,18 @@ public class EventDTO {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public Map<String, String> getDias() {
+	public BiMap<String, String> getDias() {
 		return dias;
 	}
-	public void setDias(Map<String, String> dias) {
+	public void setDias(BiMap<String, String> dias) {
 		this.dias = dias;
 	}
-	
+	public List<SchedulingEntryPro> getEntries() {
+		return entries;
+	}
+	public void setEntries(List<SchedulingEntryPro> entries) {
+		this.entries = entries;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

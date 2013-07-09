@@ -6,7 +6,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
-	<title>Admin SP</title>
+	<title>Admin Scheduling</title>
 	
 	<!-- CSS -->
 	<link href="css/demo_page.css" rel="stylesheet" type="text/css" />
@@ -17,6 +17,11 @@
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
+	
+	<script type="text/javascript" src="fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+	<link rel="stylesheet" href="fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+	<script type="text/javascript" src="fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+	
 	<script type="text/javascript" charset="utf-8">
 		$(document).ready( function () {
 			oTable = $('#example').dataTable({
@@ -28,11 +33,12 @@
 					{ "sWidth": "5%" },
 					{ "sWidth": "20%" },
 					{ "sWidth": "5%"},
-					{ "sWidth": "10%"},
-					{ "sWidth": "35%"},
-					{ "sWidth": "15%"}
+					{ "sWidth": "10%", "bSortable" : false},
+					{ "sWidth": "38%", "bSortable" : false},
+					{ "sWidth": "12%", "bSortable" : false}
 				]
 			});
+
 			$.extend( $.fn.dataTableExt.oStdClasses, {
 			    "sWrapper": "dataTables_wrapper form-inline"
 			} );
@@ -40,7 +46,23 @@
 			$('#search-box').keyup(function() {
 				oTable.fnFilter( $(this).val() );
 			});
-		} );
+
+			$(".fancy").fancybox({
+				maxWidth	: 1280,
+				maxHeight  : 710,
+				fitToView	: true,
+				width		: '100%',
+				height		: '70%',
+				padding		: 0,
+				autoSize	: true,
+				closeClick	: true,
+				openEffect	: 'elastic',
+				closeEffect	: 'fade',
+				afterClose : function() {
+					location.href = "/scheduling";
+				} 
+			});
+		});
 		
 	</script>
 	
@@ -73,7 +95,7 @@
 <div class="navbar navbar-inverse navbar-static-top hidden-print">
     <div class="navbar-inner">
         <ul class="nav">
-            <li><a href="#">SP</a></li>
+            <li><a href="admin.movixla.com/sp/">SP</a></li>
             <li class="active"><a href="#">Scheduling</a></li>
         </ul>
         <ul class="nav pull-right">
@@ -87,14 +109,16 @@
 <div class="navbar navbar-inverse navbar-static-top">
     <div class="navbar-inner">
         <ul class="nav">
-            <li class="active"><a href="#">Eventos Calendarizados</a></li>
-            <li><a href="#">Calendario</a></li>
-            <li><a href="#">Falta Aprobación</a></li>
-            <li><a href="#">Historial</a></li>
+            <li class="active"><a href="events">Eventos</a></li>
         </ul>
+
         <form class="navbar-search pull-right">
-            <input id="search-box" type="text" class="search-query" placeholder="Search">
+            <input id="search-box" type="text" class="search-query"  placeholder="Buscar...">
         </form>
+
+        <div class="pull-right">
+        	<a href="events?action=add" data-fancybox-type="iframe" class="btn btn-primary fancy"> <i class="icon-plus icon-white"></i> Nuevo </a>
+        </div>
     </div>
 </div>
 
@@ -106,14 +130,26 @@
 	        <th>SP</th>
 	        <th>Tipo</th>
 	        <th>Días</th>
-	        <th>Horario</th>
+	        <th>Horario UTC</th>
 	        <th>Acciones</th>
 		</tr>
 	</thead>
 	<tbody>
 		<c:forEach var="event" items="${events}">
 		<tr class="odd_gradeA">
-	        <td>${event.getOperador().toString()}</td>
+	        <td>
+	        	<c:set var="opCountry" value="${event.getOperador().getPais().getCodigo().toUpperCase()}" />
+	        	<c:set var="opName" value="${event.getOperador().name().split('_')[0].substring(0,1).toUpperCase().concat(event.getOperador().name().split('_')[0].substring(1).toLowerCase())}" />
+	        	<c:if test="${opCountry == 'CO' && opName == 'Comcel'}">
+	        		<c:set var="opCountry" value="CO" />
+	        		<c:set var="opName" value="Claro" />
+	        	</c:if>
+	        	<c:if test="${opCountry == 'PA' && opName == 'Cableandwireless'}">
+	        		<c:set var="opCountry" value="PA" />
+	        		<c:set var="opName" value="C&W" />
+	        	</c:if>
+	        	<span class="label label-info">${opCountry}</span>&nbsp;${opName}
+	        </td>
 			<td>${event.getProducto()}</td>
 	        <td>${event.getSp() }</td>
 	        <td>${event.getTipo() }</td>
@@ -131,7 +167,14 @@
 		        </c:forEach>
 	        	</ul>
 	        </td>
-	        <td><i class="icon-ok-sign icon-large"></i></td>
+	        <td class="center">
+		        <div class="btn-group">
+		        	<a class="btn fancy" data-fancybox-type="iframe" href="events?action=add&eventId=${event.getId()}"><i class="icon-copy"></i></a>
+<%-- 		        	<a class="btn" href="events?action=delete&eventId=${event.getId()}"><i class="icon-remove"></i></a> --%>
+<!-- 		        	<a class="btn disabled" href="#" ><i class="icon-book"></i></a>  -->
+		        	<a class="btn btn-info fancy" data-fancybox-type="iframe" href="events?action=edit&eventId=${event.getId()}"><i class="icon-edit"></i></a>
+		        </div>
+	        </td>
 		</tr>
 		</c:forEach>
 		
