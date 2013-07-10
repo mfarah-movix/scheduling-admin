@@ -95,7 +95,7 @@
 <div class="navbar navbar-inverse navbar-static-top hidden-print">
     <div class="navbar-inner">
         <ul class="nav">
-            <li><a href="admin.movixla.com/sp/">SP</a></li>
+            <li><a href="http://admin.movixla.com/sp/">SP</a></li>
             <li class="active"><a href="#">Scheduling</a></li>
         </ul>
         <ul class="nav pull-right">
@@ -151,12 +151,16 @@
 	        	<span class="label label-info">${opCountry}</span>&nbsp;${opName}
 	        </td>
 			<td>${event.getProducto()}</td>
-	        <td>${event.getSp() }</td>
+	        <td>${event.getSp() == "" ? "Todos" : event.getSp()}</td>
 	        <td>${event.getTipo() }</td>
 	        <td>
 	        	<ul style="list-style-type: none; padding: 0;margin: 0;">
 		        <c:forEach var="dia" items="${event.getDias()}">
-		        	<li>${dia.key}</li>
+		        	<li>
+		        	<c:if test="${dia.key == 'LU,MA,MI,JU,VI,SA,DO'}">LU a DO</c:if>
+		        	<c:if test="${dia.key == 'LU,MA,MI,JU,VI'}">LU a VI</c:if>
+		        	<c:if test="${dia.key != 'LU,MA,MI,JU,VI' && dia.key != 'LU,MA,MI,JU,VI,SA,DO'}">${dia.key}</c:if>
+		        	</li>
 		        </c:forEach>
 	        	</ul>
 	        </td>
@@ -172,7 +176,7 @@
 		        	<a class="btn fancy" data-fancybox-type="iframe" href="events?action=add&eventId=${event.getId()}"><i class="icon-copy"></i></a>
 <%-- 		        	<a class="btn" href="events?action=delete&eventId=${event.getId()}"><i class="icon-remove"></i></a> --%>
 <!-- 		        	<a class="btn disabled" href="#" ><i class="icon-book"></i></a>  -->
-		        	<a class="btn btn-info fancy" data-fancybox-type="iframe" href="events?action=edit&eventId=${event.getId()}"><i class="icon-edit"></i></a>
+		        	<a class="btn btn-primary fancy" data-fancybox-type="iframe" href="events?action=edit&eventId=${event.getId()}"><i class="icon-edit"></i></a>
 		        </div>
 	        </td>
 		</tr>

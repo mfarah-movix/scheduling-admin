@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ public class EventDAOImpl implements EventDAO {
 					if(daysPatterns[i].equals(days[j])){
 						String schedule = event.getDias().get(key);
 						String[] daysSchedule = schedule.split("\\|");
+						int h = 0;
 						for(int k = 0; k < daysSchedule.length; k++){
 							String[] rangesByDay = daysSchedule[k].trim().split(",");
 							String lastKey = "-1";
@@ -43,8 +45,9 @@ public class EventDAOImpl implements EventDAO {
 								String dayPattern = l == 0 && k == 0 ? daysPatterns[i] : "+" + k + "d";
 								String startHour = rangesByDay[l].trim().split("-")[0]; 
 								String endHour = rangesByDay[l].trim().split("-")[1];
-								String entryKey = event.getProducto() + ":" + event.getOperador().getIdBD() + ":" + event.getSp() + ":_:" + 
-													"d" + i + "-h" + l + "-" + event.getTipo();
+								String spForKey = event.getSp() == null ? "_" : event.getSp();
+								String entryKey = event.getProducto() + ":" + event.getOperador().getIdBD() + ":" + spForKey + ":_:" + 
+													"d" + i + "-h" + h + "-" + event.getTipo();
 								newEntry.setActive(true);
 								newEntry.setDayPattern(dayPattern);
 								newEntry.setEndHour(endHour.trim());
@@ -55,8 +58,10 @@ public class EventDAOImpl implements EventDAO {
 								newEntry.setServicePrice(event.getSp());
 								newEntry.setStartHour(startHour.trim());
 								newEntry.setType(Type.valueOf(event.getTipo()));
+								newEntry.setActive(event.isActive());
 								newSchedulingEntryPros.add(newEntry);
 								lastKey = entryKey;
+								h++;
 							}
 						}
 					}
@@ -64,17 +69,17 @@ public class EventDAOImpl implements EventDAO {
 			}
 		}
 		
-		logger.debug("===Nuevo===");
-		for(SchedulingEntryPro e : newSchedulingEntryPros){
-			logger.debug(e.getDayPattern() + ", " + e.getEnd() + ", " + e.getKey() + ", " + e.getOperator() + ", " + e.getProduct() + ", " + e.getServicePrice() + ", " + e.getStart() + ", " + e.getType());
+		
+		System.out.println("=====NUEVO=====");
+		for(SchedulingEntryPro newEntry : newSchedulingEntryPros){
+			System.out.println(newEntry);
 		}
 		if(schedulingEntryPros != null){
-			logger.debug("===Antiguo===");
-			for(SchedulingEntryPro e : schedulingEntryPros){
-				logger.debug(e.getDayPattern() + ", " + e.getEnd() + ", " + e.getKey() + ", " + e.getOperator() + ", " + e.getProduct() + ", " + e.getServicePrice() + ", " + e.getStart() + ", " + e.getType());
+			System.out.println("=====VIEJO=====");
+			for(SchedulingEntryPro oldEntry : schedulingEntryPros){
+				System.out.println(oldEntry);
 			}
-		}
-		
+		}	
 		for(SchedulingEntryPro newEntry : newSchedulingEntryPros){
 			if(schedulingEntryPros != null){		
 				for(SchedulingEntryPro oldEntry : schedulingEntryPros){
@@ -84,9 +89,7 @@ public class EventDAOImpl implements EventDAO {
 					}
 				}
 			}
-			logger.debug("Guardando nuevo");
 			schedulingClient.upsert(newEntry);
-			logger.debug("Guardado");
 		}
 		if(schedulingEntryPros != null){
 			for(SchedulingEntryPro oldEntry : schedulingEntryPros){
@@ -117,7 +120,7 @@ public class EventDAOImpl implements EventDAO {
 		List<SchedulingEntryPro> eventEntries = new ArrayList<SchedulingEntryPro>();
 		boolean first = true;
 		for(SchedulingEntryPro entry : schedulingEntries){
-			lastServicePrice = last.getServicePrice() == null ? "Todos" : last.getServicePrice();
+			lastServicePrice = last.getServicePrice() == null ? "" : last.getServicePrice();
 			if(first){
 				last = entry;
 				lastDay = entry.getDayPattern();

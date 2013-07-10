@@ -14,6 +14,7 @@ public class EventDTO {
 	private String sp;
 	private String tipo;
 	private String key;
+	private boolean active;
 	BiMap<String, String> dias;
 	List<SchedulingEntryPro> entries;
 
@@ -73,6 +74,12 @@ public class EventDTO {
 	}
 	public void setKey(String key) {
 		this.key = key;
+	}
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	public BiMap<String, String> getDias() {
 		return dias;

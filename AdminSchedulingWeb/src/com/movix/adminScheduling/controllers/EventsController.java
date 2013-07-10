@@ -36,13 +36,14 @@ public class EventsController extends HttpServlet {
     public EventsController() {
     	super();
     	eventCache = new EventCache();
-    	eventCache.init();
+//    	eventCache.init();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		eventCache.invalidateEventCache();
 		String action = request.getParameter("action") == null ? "index" : request.getParameter("action");
 		String forward = E404;
 		if(action.equals("index") ){
@@ -79,7 +80,18 @@ public class EventsController extends HttpServlet {
 	}
 	
 	private void getIndex(HttpServletRequest request) {
-		request.setAttribute("events", eventCache.getAll());
+		List<EventDTO> events = eventCache.getAll();
+		boolean old = true;
+		for(EventDTO event : events){
+			for(String val : event.getDias().values()){
+				if(val.indexOf("56") > -1){
+					old = false;
+					break;
+				}
+			}
+		}
+		if(!old) System.out.println("Se refrescó");
+		request.setAttribute("events", events);
 	}
 
 	private void getEdit(HttpServletRequest request){
@@ -136,15 +148,18 @@ public class EventsController extends HttpServlet {
 		String producto = request.getParameter("producto");
 		String sp = request.getParameter("sp");
 		String tipo = request.getParameter("tipo").equals("1") ? "CHARGE" : "SENDING";
+		boolean active = request.getParameter("estado").equals("1") ? true : false;
+		boolean anySp = sp.equals("Todos") || sp.equals("");
 		
 		EventDTO event = new EventDTO();
-		String newKey = producto + ":" + Operador.valueOf(operador).getIdBD() + ":" + sp + ":" + tipo;
+		String newKey = producto + ":" + Operador.valueOf(operador).getIdBD() + ":" + ( anySp ? "_" : sp ) + ":" + tipo;
 		event.setKey(newKey);
 		event.setDias(daysMap);
 		event.setOperador(Operador.valueOf(operador));
 		event.setProducto(producto);
-		event.setSp(sp);
+		event.setSp(anySp ? null : sp);
 		event.setTipo(tipo);
+		event.setActive(active);
 		return event;
 	}
 	
