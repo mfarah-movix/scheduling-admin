@@ -36,14 +36,13 @@ public class EventsController extends HttpServlet {
     public EventsController() {
     	super();
     	eventCache = new EventCache();
-//    	eventCache.init();
+    	eventCache.init();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		eventCache.invalidateEventCache();
 		String action = request.getParameter("action") == null ? "index" : request.getParameter("action");
 		String forward = E404;
 		if(action.equals("index") ){
@@ -81,16 +80,6 @@ public class EventsController extends HttpServlet {
 	
 	private void getIndex(HttpServletRequest request) {
 		List<EventDTO> events = eventCache.getAll();
-		boolean old = true;
-		for(EventDTO event : events){
-			for(String val : event.getDias().values()){
-				if(val.indexOf("56") > -1){
-					old = false;
-					break;
-				}
-			}
-		}
-		if(!old) System.out.println("Se refrescó");
 		request.setAttribute("events", events);
 	}
 

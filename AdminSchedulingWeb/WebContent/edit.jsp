@@ -60,14 +60,34 @@
 		    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392 !important;
 		    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392 !important;
 		}
-
-		#flashMessage{
-			background-color:#
-		}
 		
-		label.error {
-			display: none !important;
-		}
+ 		label.error {
+		    padding: 2px 4px;
+		    margin: 0px;
+		    border: solid 1px #FBD3C6;
+		    background: #FDE4E1;
+		    color: #CB4721;
+		    font-size: 13px;
+		    font-weight: bold;
+		    text-align: center;
+		    display: inline;
+   		}
+   		
+   		#eventsForm div {
+   			margin-bottom:0px !important;
+   		}
+   		
+   		#addDayGroup {
+   			margin-top: 10px;
+   		}
+   		
+   		.deleteDayGroup{
+   			margin-top: 10px;
+   		}
+   		
+   		.addDay{
+   			margin-top: 10px;
+   		}
     </style>
     <script type="text/javascript">
     	function joinDay(groupId, dayId){
@@ -109,10 +129,11 @@
     	function reNameDay(groupId, dayId){
     		id = "#dayG" + groupId + "D" + dayId;
     		name = "rangeG"+ groupId + "D" + dayId + "R";
+    		console.log(dayId);
+    		console.log(groupId);
     		rangeId = 0;
     		i = 0;
-    		console.log(id);
-    		$.each($(id + " :input"), function(index, value){
+    		$.each($(id + ":input"), function(index, value){
     			if(i % 2 == 0){
 	    			$(value).attr({name: name + rangeId + ".from"});
     			} else {
@@ -125,12 +146,21 @@
     	
     	function reNameDayGroup(groupId){
     		$.each($(".dayG" + groupId), function(index, value){
+    			$(value).attr("id", "dayG" + groupId + "D" + index);
+    			title = "Mismo día";
+    			if(index == 1){
+    				title = "1 día más";
+    			} else if(index > 1){
+    				title = index + " días más";
+    			}
+    			$(value).find(".dayTitle").text(title);
     			reNameDay(groupId, index);
     		});
     	}
     	
     	function reNameFull(){
     		$.each($(".dayGroup"), function(index, value){
+    			$(value).attr("id", "G" + index);
     			reNameDayGroup(index);
     		});
     	}
@@ -168,11 +198,11 @@
     	$(document).ready(function(){
     		$.validator.addMethod("time24", function(value, element) {
         	    return value == "*" || /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(value);
-        	}, "");
+        	}, "Hora no válida");
 
     		$.validator.addMethod("lastRangeByDay", function(value, element) {
         	    return value == "*" || value >= getMaxParentsRangesEnd(element);
-        	}, "");
+        	}, "Hora de inicio menor a la de término mayor");
 
     		$('.selectpicker').selectpicker();
 
@@ -180,6 +210,9 @@
 	    		e.preventDefault();
 	    		var dayGroupId = this.id;
 	    		var newNewRange = $("#newRange" + dayGroupId).clone();
+	    		$.each($(newNewRange).children(), function(index, value){
+	    			$(value).show();
+	    		});
 	    		$("#newRange" + dayGroupId).show().attr("id", "");
 	    		$(this).before(newNewRange);
 	    	});
@@ -231,6 +264,13 @@
 	    	$(".deleteRange").live("click", function(e){
 	    		e.preventDefault();
 	    		$(this).parent().parent().remove();
+	    		reNameFull();
+	    	});
+	    	
+	    	$(".deleteDayGroup").live("click", function(e){
+	    		e.preventDefault();
+	    		$(this).parent().parent().parent().remove();
+	    		reNameFull();
 	    	});
 	    	
 	    	$(".deleteDay").live("click", function(e){
@@ -238,15 +278,22 @@
 	    		groupId = $(this).parent().parent().attr("id");
 	    		$(this).parent().remove();
 	    		$("#newDayId" + groupId).val(parseInt($("#newDayId" + groupId).val(), 10) - 1);
+	    		reNameFull();
 	    	});
 	    	
 	    	$('#eventsForm').validate({
-	    		errorPlacement: function(error, element) { },
+	    		errorPlacement: function(error, element) {
+	    			$("#flashMessage").empty().show().append(error);
+	    		},
 	            submitHandler: function(form){
 	 	    		reNameFull();
 	 	   			setDaysMap();
 	 	   			form.submit();
 	 	   			parent.$.fancybox.close();
+	 	   			parent.location.reload();
+	            },
+	            success: function(label){
+	            	$(label).parent().hide();
 	            }
 	        });
     	});
@@ -256,7 +303,7 @@
 <body style="font-size:13px;">
 	<div class="container-fluid">
 	<fieldset>
-		<legend>${action == 'edit' ? 'Editar' : 'Crear'}<span id="flashMessage"></span></legend>
+		<legend>${action == 'edit' ? 'Editar' : 'Crear'} &nbsp;<span id="flashMessage"></span></legend>
 		<form method="post" action="events" id="eventsForm">
 			<input type="hidden" name="eventId" value="${event.getId()}" />
 			<input type="hidden" name="action" value="${action}" />
@@ -326,9 +373,11 @@
 							</c:forEach>
 						</select>
 					</div>
+					<c:if test="${dayGroupIndex.count > 1}">
 					<div style="border-right: 0px solid black;">
-						<a class="btn" href="#"><i class="icon-trash"></i><br />Eliminar</a>
+						<a class="btn deleteDayGroup" href="#"><i class="icon-trash"></i><br />Eliminar</a>
 					</div>
+					</c:if>
 				</div>
 				<c:forEach var="hourRanges" items="${fn:split(days.value, '|')}" varStatus="daysIndex">
 				<c:if test="${daysIndex.last}">
@@ -343,7 +392,10 @@
 					${daysIndex.count - 1} día${daysIndex.count > 2 ? 's' : ''} más
 					</c:if>
 					</span>
+					<c:if test="${!daysIndex.first}">
 					&nbsp;
+					<a class="btn deleteDay" href="#"><i class="icon-trash icon-large"></i></a>
+					</c:if>
 					<div class="row" style="border: 0px solid yellow;">
 						<div class="span1 text-center" style="border: 0px solid red;">
 							Desde
@@ -361,9 +413,11 @@
 						<div class="span1 text-center control-group" style="border: 0px solid red;">
 							<input class="span1 required time24" size=6 type="text" placeholder="00:00" value="${rangeArray[1].trim()}" name="rangeG${dayGroupIndex.count - 1}D${daysIndex.count - 1}R${rangeIndex.count - 1}.until" />
 						</div>
+						<c:if test="${rangeIndex.count > 1}">
 						<div class="btn-group text-left span1" style="padding-top:3px;">
 				        	<a class="btn deleteRange" href="#"><i class="icon-trash icon-large"></i></a> 
 				        </div>
+						</c:if>
 					</div>
 					</c:forEach>
 					<div class="row" style="display:none;" id="newRangeG${dayGroupIndex.count - 1}D${daysIndex.count - 1}">
@@ -399,7 +453,7 @@
 						<div class="span1 text-center control-group" style="border: 0px solid red;">
 							<input class="span1 required time24" size=6 type="text" placeholder="00:00" id="newUntilG${dayGroupIndex.count - 1}" />
 						</div>
-						<div class="btn-group text-left span1" style="padding-top:3px;">
+						<div class="btn-group text-left span1" style="padding-top:3px; display:none;">
 					       	<a class="btn deleteRange" href="#" id="newDeleteRange"><i class="icon-trash icon-large"></i></a> 
 					    </div>
 					</div>
@@ -421,7 +475,7 @@
 						</select>
 					</div>
 					<div>
-						<a class="btn" href="#"><i class="icon-trash"></i><br />Eliminar</a>
+						<a class="btn deleteDayGroup" href="#"><i class="icon-trash"></i><br />Eliminar</a>
 					</div>
 				</div>
 				<input type="hidden" id="newGroupNewDayId" />
@@ -442,9 +496,9 @@
 						<div class="span1 text-center control-group">
 							<input class="span1 required time24" size=6 type="text" placeholder="00:00" />
 						</div>
-						<div class="btn-group text-left span1" style="padding-top:3px;">
-				        	<a class="btn deleteRange" href="#"><i class="icon-trash icon-large"></i></a> 
-				        </div>
+<!-- 						<div class="btn-group text-left span1" style="padding-top:3px;"> -->
+<!-- 				        	<a class="btn deleteRange" href="#"><i class="icon-trash icon-large"></i></a>  -->
+<!-- 				        </div> -->
 					</div>
 					<div class="row" style="display:none;" id="newDayGroupFirstRange">
 						<div class="span1 text-center control-group">
@@ -461,6 +515,8 @@
 				</div>
 				<div class="span3 text-center" style="border-right: 1px solid black; display:none;" id="newDayGroupNewDay">
 					<span class="dayTitle" id="newDayGroupNewDayTitle"></span>
+					&nbsp;
+					<a class="btn deleteDay" href="#"><i class="icon-trash icon-large"></i></a>
 					<div class="row">
 						<div class="span1 text-center">
 							Desde
@@ -476,7 +532,7 @@
 						<div class="span1 text-center control-group">
 							<input class="span1 required time24" size=6 type="text" placeholder="00:00" id="newGroupDayNewDayUntil" />
 						</div>
-						<div class="btn-group text-left span1" style="padding-top:3px;">
+						<div class="btn-group text-left span1" style="padding-top:3px; display:none;">
 					       	<a class="btn deleteRange" href="#" id="newDayGroupNewDeleteRange"><i class="icon-trash icon-large"></i></a> 
 					    </div>
 					</div>
@@ -496,7 +552,7 @@
 			</div>
 			<div class="form-actions">
 				<button class="btn btn-primary" type="submit">Guardar</button>
-				<button class="btn btn-danger" onclick="parent.$.fancybox.close()" type="button">Cancelar</button>
+				<button class="btn btn-danger" onclick="parent.$.fancybox.close();" type="button">Cancelar</button>
 			</div>
 		</form>
 	</fieldset>

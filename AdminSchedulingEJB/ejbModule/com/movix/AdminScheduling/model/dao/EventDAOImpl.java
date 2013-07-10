@@ -113,6 +113,15 @@ public class EventDAOImpl implements EventDAO {
 		List<EventDTO> events = new ArrayList<EventDTO>();
 		SchedulingClient schedulingClient = SchedulingClient.getInstance();
 		List<SchedulingEntryPro> schedulingEntries = schedulingClient.getEntries();
+//		boolean found = false;
+//		for(SchedulingEntryPro entry : schedulingEntries){
+//			String sp = entry.getServicePrice() == null ? "" : entry.getServicePrice();
+//			if(sp.equals("nuevo")){
+//				found = true;
+//				break;
+//			}
+//		}
+//		if(found) System.out.println("Encontrado nuevo");			
 		Collections.sort(schedulingEntries, new SchedulingEntryProComparator());
 		SchedulingEntryPro last = new SchedulingEntryPro();
 		String hourSchedule = "", lastDay = "", lastServicePrice = "";

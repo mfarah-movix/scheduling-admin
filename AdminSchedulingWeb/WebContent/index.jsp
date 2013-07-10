@@ -58,9 +58,6 @@
 				closeClick	: true,
 				openEffect	: 'elastic',
 				closeEffect	: 'fade',
-				afterClose : function() {
-					location.href = "/scheduling";
-				} 
 			});
 		});
 		

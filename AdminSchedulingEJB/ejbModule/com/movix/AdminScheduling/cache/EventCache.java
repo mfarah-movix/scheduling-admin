@@ -26,20 +26,20 @@ public class EventCache {
 	public void init(){	
 		cache = CacheBuilder.newBuilder().
 		expireAfterAccess(60, TimeUnit.SECONDS).
-//		removalListener(
-//			new RemovalListener<String, List<EventDTO>>(){
-//				public void onRemoval(RemovalNotification<String, List<EventDTO>> notification) {
-//					System.out.println("SchedulingCache: Se removerá el arreglo");
-//					if(notification.getCause() == RemovalCause.EXPIRED){
-//						System.out.println("SchedulingCache: La siguiente entrada expiró: " + notification.getKey());	                                    	
-//					}
-//					else{
-//						System.out.println("SchedulingCache: La siguiente entrada fue borrada intencionalmente: " + notification.getCause());
-//					}
-//					refreshCache();
-//				}
-//			}
-//		).
+		removalListener(
+			new RemovalListener<String, List<EventDTO>>(){
+				public void onRemoval(RemovalNotification<String, List<EventDTO>> notification) {
+					System.out.println("SchedulingCache: Se removerá el arreglo");
+					if(notification.getCause() == RemovalCause.EXPIRED){
+						System.out.println("SchedulingCache: La siguiente entrada expiró: " + notification.getKey());	                                    	
+					}
+					else{
+						System.out.println("SchedulingCache: La siguiente entrada fue borrada intencionalmente: " + notification.getCause());
+					}
+					refreshCache();
+				}
+			}
+		).
 		build(
 			new CacheLoader<String, List<EventDTO>>() {
 				public List<EventDTO> load(String key) {
@@ -51,28 +51,28 @@ public class EventCache {
 	}
 	
 	public List<EventDTO> getAll(){
-//		List<EventDTO> events = new ArrayList<EventDTO>();
-//		try {
-//			events = cache.get(everythingKey);
-//		} catch (ExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-//		return events;
-		eventDAO = EventDAOFactory.getEventDAO();
-		return eventDAO.findAll();
+		List<EventDTO> events = new ArrayList<EventDTO>();
+		try {
+			events = cache.get(everythingKey);
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return events;
+//		eventDAO = EventDAOFactory.getEventDAO();
+//		return eventDAO.findAll();
 	}
 
 	public EventDTO getEvent(Integer eventId){
-//		List<EventDTO> events = new ArrayList<EventDTO>();
-//		try {
-//			events = this.get(everythingKey);
-//		} catch (ExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		eventDAO = EventDAOFactory.getEventDAO();
-		List<EventDTO> events = eventDAO.findAll();
+		List<EventDTO> events = new ArrayList<EventDTO>();
+		try {
+			events = this.get(everythingKey);
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		eventDAO = EventDAOFactory.getEventDAO();
+//		List<EventDTO> events = eventDAO.findAll();
 		for(EventDTO event : events){
 			if(event.getId() == eventId){
 				return event;
@@ -84,7 +84,7 @@ public class EventCache {
 	public void updateEvent(EventDTO event){
 		eventDAO = EventDAOFactory.getEventDAO();
 		eventDAO.upsert(event);
-//		this.invalidateEventCache();
+		this.invalidateEventCache();
 //		cache.put(everythingKey, eventDAO.findAll());
 	}
 
@@ -101,10 +101,10 @@ public class EventCache {
 		cache.refresh(everythingKey);
 	}
 
-//	public void invalidateEventCache(){
-//		lastUpdate = new Date();
-//		cache.invalidate(everythingKey);
-//	}
+	public void invalidateEventCache(){
+		lastUpdate = new Date();
+		cache.invalidate(everythingKey);
+	}
 	
 	public void test(){
 		eventDAO.test();
