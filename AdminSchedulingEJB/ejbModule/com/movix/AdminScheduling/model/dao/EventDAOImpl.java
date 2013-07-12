@@ -82,18 +82,24 @@ public class EventDAOImpl implements EventDAO {
 			}
 		}
 		
-		for(int i = 0; i < Math.max(newSchedulingEntryPros.size(), schedulingEntryPros.size()); i++){
-			SchedulingEntryPro toSave = new SchedulingEntryPro();
-			if(i < newSchedulingEntryPros.size()){
-				toSave = newSchedulingEntryPros.get(i);
-				if(i < schedulingEntryPros.size()){
-					toSave.setId(schedulingEntryPros.get(i).getId());					
+		if(schedulingEntryPros != null){
+			for(int i = 0; i < Math.max(newSchedulingEntryPros.size(), schedulingEntryPros.size()); i++){
+				SchedulingEntryPro toSave = new SchedulingEntryPro();
+				if(i < newSchedulingEntryPros.size()){
+					toSave = newSchedulingEntryPros.get(i);
+					if(i < schedulingEntryPros.size()){
+						toSave.setId(schedulingEntryPros.get(i).getId());					
+					}
+				} else {
+					toSave = schedulingEntryPros.get(i); 
+					toSave.setActive(false);
 				}
-			} else {
-				toSave = schedulingEntryPros.get(i); 
-				toSave.setActive(false);
+				schedulingClient.upsert(toSave);
 			}
-			schedulingClient.upsert(toSave);
+		} else {
+			for(int i = 0; i < newSchedulingEntryPros.size(); i++){
+				schedulingClient.upsert(newSchedulingEntryPros.get(i));
+			}
 		}
 //		for(SchedulingEntryPro newEntry : newSchedulingEntryPros){
 //			if(schedulingEntryPros != null){		
