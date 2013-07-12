@@ -165,20 +165,36 @@
     		});
     	}
     	
-    	function refreshAddDaysSelect(){
+    	function getAvailableDays(){
     		var days = new Array("LU", "MA", "MI", "JU", "VI", "SA", "DO");
     		qty = $("select.weekDays").length - 1;
     		for(var i = 0; i < qty; i++){
     			$.each($("#weekDays" + i + " option:selected"), function(index, value){
-    				console.log(i + "-" + value.value);
     				days.splice(days.indexOf(value.value), 1);
-    				console.log("days:" + days);
     			});
     		}
-    		var addGroupDaySelect = $("#addGroupDaySelect").find("option").remove().end();
-    		for(var i = 0; i < days.length; i++){
-    			addGroupDaySelect.append('<option value="' + days[i] + '">' + days[i] + '</option>').val(days[i]);
+    		return days;
+    	}
+    	
+    	function refreshAddDaysSelect(){
+    		days = getAvailableDays();
+    		if(days.length == 0 && !$("#addDayGroup").hasClass("disabled")){
+    			$("#addDayGroup").addClass("disabled");
     		}
+    	}
+
+    	function occurrences(string, subString, allowOverlapping){
+    	    string+=""; subString+="";
+    	    if(subString.length<=0) return string.length+1;
+
+    	    var n=0, pos=0;
+    	    var step=(allowOverlapping)?(1):(subString.length);
+
+    	    while(true){
+    	        pos=string.indexOf(subString,pos);
+    	        if(pos>=0){ n++; pos+=step; } else break;
+    	    }
+    	    return(n);
     	}
     	
     	function getMaxParentsRangesEnd(element){
@@ -196,6 +212,8 @@
     	}
     	
     	$(document).ready(function(){
+    		refreshAddDaysSelect();
+    		
     		$.validator.addMethod("time24", function(value, element) {
         	    return value == "*" || /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(value);
         	}, "Hora no válida");
@@ -204,7 +222,18 @@
         	    return value == "*" || value >= getMaxParentsRangesEnd(element);
         	}, "Hora de inicio menor a la de término mayor");
 
+    		$.validator.addMethod("servicePriceStyle", function(value, element) {
+    			return (value.trim().indexOf(' ') < 0 && 
+    					occurrences(value, '/', false) == 1 &&
+    					value.indexOf(',') < 0)
+    					|| value.trim() == '*';
+        	}, "No puede tener ',' , tiene que tener sólo un '/' o ser igual a '*' para cualquier ServicioPrecio");
+
     		$('.selectpicker').selectpicker();
+    		
+    		$('.selectpicker').live("close", function(e){
+    			refreshAddDaysSelect();
+    		});
 
 	    	$(".addRange").live("click", function(e){
 	    		e.preventDefault();
@@ -259,6 +288,13 @@
 	    		$('#newGroupDayNewDayUntil').attr("id", "newUntilG" + nextId);
 	    		$('#newDayGroupNewAddRange').attr("id", "newAddRangeG" + nextId);
 	    		$(this).parent().before(newNewDayGroup);
+	    		days = getAvailableDays();
+	    		$("#weekDays" + nextId).find("option").remove();
+	    		for(var i = 0; i < days.length; i++){
+	    			$("#weekDays" + nextId).append('<option value="' + days[i] + '">' + days[i] + '</option>').val(days[i]);
+	    		}
+	   			$("#weekDays" + nextId).selectpicker('refresh').selectpicker('deselectAll');
+	   			return true;
 	    	});
 	    	
 	    	$(".deleteRange").live("click", function(e){
@@ -286,24 +322,31 @@
 	    			$("#flashMessage").empty().show().append(error);
 	    		},
 	            submitHandler: function(form){
-	 	    		reNameFull();
-	 	   			setDaysMap();
-	 	   			form.submit();
-	 	   			parent.$.fancybox.close();
-	 	   			parent.location.reload();
+	            	reNameFull();
+	       			setDaysMap();
+	       			$(form).submit();
+	       			parent.$.fancybox.close();
+	       			parent.location.reload();
 	            },
 	            success: function(label){
 	            	$(label).parent().hide();
 	            }
 	        });
+
+	    	$('#deleteButton').click(function(e){
+	    		reNameFull();
+	   			setDaysMap();
+	   			parent.$.fancybox.close();
+	   			parent.location = 'events?action=delete&eventId=${event.getId()}';
+	    	});
     	});
     	
     </script>
 </head>
 <body style="font-size:13px;">
-	<div class="container-fluid">
+<div class="container-fluid">
 	<fieldset>
-		<legend>${action == 'edit' ? 'Editar' : 'Crear'} &nbsp;<span id="flashMessage"></span></legend>
+		<legend>${action == 'edit' ? 'Editar' : (event.getId() == 0 ? 'Crear' : 'Clonar') } &nbsp;<span id="flashMessage"></span></legend>
 		<form method="post" action="events" id="eventsForm">
 			<input type="hidden" name="eventId" value="${event.getId()}" />
 			<input type="hidden" name="action" value="${action}" />
@@ -339,7 +382,7 @@
 			
 				<div class="span5">
 					<label>ServicioPrecio</label>
-					<input class="span5" type="text" value="${event.getSp() == '' ? 'Todos' : event.getSp()}" name="sp" style="font-size:13px;"/>
+					<input class="span5 servicePriceStyle" type="text" value="${event.getSp() == '' ? '*' : event.getSp()}" name="sp" style="font-size:13px;"/>
 				</div>
 			
 				<div class="span2">
@@ -350,20 +393,12 @@
 					</c:forEach>
 					</select>
 				</div>
-			
-				<div class="span2">
-					<label>Estado</label>
-					<select class="selectpicker span2" name="estado" title="Estado">
-						<option value="1" selected="selected">Activo</option>
-						<option value="0">Inactivo</option>
-					</select>
-				</div>
 			</div>
 	
 			<hr>
 	
 			<c:forEach var="days" items="${event.getDias()}" varStatus="dayGroupIndex">
-			<div class="row dayGroup" id="G${dayGroupIndex.count - 1}" style="border-bottom:1px solid black; padding-bottom: 15px; margin-bottom: 15px;">
+			<div class="row dayGroup" id="G${dayGroupIndex.count - 1}" style="border-bottom:1px solid black; padding-bottom: 15px; margin-bottom: 15px; margin-top:15px;">
 				<div class="span3">
 					<div>
 						<label>Días</label>
@@ -464,7 +499,7 @@
 				</div>
 			</div>
 			</c:forEach>
-			<div class="row dayGroup" id="newDayGroup" style="display:none; border-bottom:1px solid black; padding-bottom: 15px; margin-bottom: 15px;">
+			<div class="row dayGroup" id="newDayGroup" style="display:none; border-bottom:1px solid black; padding-bottom: 15px; margin-bottom: 15px; margin-top:15px;">
 				<div class="span3">
 					<div>
 						<label>Días</label>
@@ -496,9 +531,6 @@
 						<div class="span1 text-center control-group">
 							<input class="span1 required time24" size=6 type="text" placeholder="00:00" />
 						</div>
-<!-- 						<div class="btn-group text-left span1" style="padding-top:3px;"> -->
-<!-- 				        	<a class="btn deleteRange" href="#"><i class="icon-trash icon-large"></i></a>  -->
-<!-- 				        </div> -->
 					</div>
 					<div class="row" style="display:none;" id="newDayGroupFirstRange">
 						<div class="span1 text-center control-group">
@@ -543,16 +575,16 @@
 				</div>
 			</div>
 			<div>
-<!-- 				<select id="addGroupDaySelect" class="selectpicker span2" name="operador" title="Agregar días"> -->
-<%-- 					<c:forEach var="weekDay" items="${weekDays}" > --%>
-<%-- 						<option value="${weekDay}" selected="selected">${weekDay}</option> --%>
-<%-- 					</c:forEach> --%>
-<!-- 				</select> -->
 				<a class="btn btn-large" id="addDayGroup" href="#"><i class="icon-plus"></i><br />Agregar días</a>
 			</div>
 			<div class="form-actions">
 				<button class="btn btn-primary" type="submit">Guardar</button>
 				<button class="btn btn-danger" onclick="parent.$.fancybox.close();" type="button">Cancelar</button>
+				<c:if test="${action == 'edit'}">
+				<div class="pull-right">
+					<button class="btn btn-danger" type="button" id="deleteButton">Eliminar</button>
+				</div>
+				</c:if>
 			</div>
 		</form>
 	</fieldset>

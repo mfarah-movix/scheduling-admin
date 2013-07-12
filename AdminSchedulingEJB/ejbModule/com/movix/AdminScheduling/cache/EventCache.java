@@ -25,7 +25,7 @@ public class EventCache {
 	
 	public void init(){	
 		cache = CacheBuilder.newBuilder().
-		expireAfterAccess(60, TimeUnit.SECONDS).
+		expireAfterAccess(2, TimeUnit.SECONDS).
 		removalListener(
 			new RemovalListener<String, List<EventDTO>>(){
 				public void onRemoval(RemovalNotification<String, List<EventDTO>> notification) {

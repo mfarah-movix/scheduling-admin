@@ -148,7 +148,7 @@
 	        	<span class="label label-info">${opCountry}</span>&nbsp;${opName}
 	        </td>
 			<td>${event.getProducto()}</td>
-	        <td>${event.getSp() == "" ? "Todos" : event.getSp()}</td>
+	        <td>${event.getSp() == "" ? "*" : event.getSp()}</td>
 	        <td>${event.getTipo() }</td>
 	        <td>
 	        	<ul style="list-style-type: none; padding: 0;margin: 0;">

@@ -52,8 +52,9 @@ public class EventsController extends HttpServlet {
 			request.setAttribute("action", action);
 			getEdit(request);
 			forward = EDIT;
-		} else if (action.equals("test")) {
-			eventCache.test();
+		} else if (action.equals("delete")) {
+			getDelete(request);
+			getIndex(request);
 			forward = INDEX;
 		}
 		RequestDispatcher view = request.getRequestDispatcher(forward);
@@ -109,6 +110,13 @@ public class EventsController extends HttpServlet {
 		request.setAttribute("products", products);
 		request.setAttribute("types", types);
 		request.setAttribute("weekDays", weekDays);
+	}
+	
+	private void getDelete(HttpServletRequest request){
+		Integer eventId = Integer.parseInt(request.getParameter("eventId"));
+		EventDTO event = eventCache.getEvent(eventId);
+		event.setActive(false);
+		eventCache.updateEvent(event);
 	}
 
 	private void postAdd(HttpServletRequest request){

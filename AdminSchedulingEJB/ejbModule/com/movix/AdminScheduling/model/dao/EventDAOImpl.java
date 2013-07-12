@@ -18,7 +18,7 @@ import com.movixla.service.scheduling.common.SchedulingEntryPro;
 import com.movixla.service.scheduling.common.SchedulingEntryPro.Type;
 
 public class EventDAOImpl implements EventDAO {
-	private Integer eventId = 0;
+	private Integer eventId = 1;
 	private String[] daysPatterns = {"LU", "MA", "MI", "JU", "VI", "SA", "DO"};
 	private static final Logger logger = LoggerFactory.getLogger(EventDAOImpl.class.getName());
 
