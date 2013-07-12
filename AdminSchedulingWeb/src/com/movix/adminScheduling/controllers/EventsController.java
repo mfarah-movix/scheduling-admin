@@ -145,7 +145,6 @@ public class EventsController extends HttpServlet {
 		String producto = request.getParameter("producto");
 		String sp = request.getParameter("sp");
 		String tipo = request.getParameter("tipo").equals("1") ? "CHARGE" : "SENDING";
-		boolean active = request.getParameter("estado").equals("1") ? true : false;
 		boolean anySp = sp.equals("Todos") || sp.equals("");
 		
 		EventDTO event = new EventDTO();
@@ -156,7 +155,7 @@ public class EventsController extends HttpServlet {
 		event.setProducto(producto);
 		event.setSp(anySp ? null : sp);
 		event.setTipo(tipo);
-		event.setActive(active);
+		event.setActive(true);
 		return event;
 	}
 	

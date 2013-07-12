@@ -129,8 +129,6 @@
     	function reNameDay(groupId, dayId){
     		id = "#dayG" + groupId + "D" + dayId;
     		name = "rangeG"+ groupId + "D" + dayId + "R";
-    		console.log(dayId);
-    		console.log(groupId);
     		rangeId = 0;
     		i = 0;
     		$.each($(id + ":input"), function(index, value){
@@ -324,7 +322,7 @@
 	            submitHandler: function(form){
 	            	reNameFull();
 	       			setDaysMap();
-	       			$(form).submit();
+	            	form.submit();
 	       			parent.$.fancybox.close();
 	       			parent.location.reload();
 	            },

@@ -14,6 +14,7 @@ import com.movix.AdminScheduling.comparators.SchedulingEntryProComparator;
 import com.movix.AdminScheduling.model.dto.EventDTO;
 import com.movix.shared.Operador;
 import com.movixla.service.scheduling.client.SchedulingClient;
+import com.movixla.service.scheduling.common.SchedulingEntry;
 import com.movixla.service.scheduling.common.SchedulingEntryPro;
 import com.movixla.service.scheduling.common.SchedulingEntryPro.Type;
 
@@ -79,33 +80,47 @@ public class EventDAOImpl implements EventDAO {
 			for(SchedulingEntryPro oldEntry : schedulingEntryPros){
 				System.out.println(oldEntry);
 			}
-		}	
-		for(SchedulingEntryPro newEntry : newSchedulingEntryPros){
-			if(schedulingEntryPros != null){		
-				for(SchedulingEntryPro oldEntry : schedulingEntryPros){
-					if(newEntry.getKey().equals(oldEntry.getKey())){
-						newEntry.setId(oldEntry.getId());
-						break;
-					}
-				}
-			}
-			schedulingClient.upsert(newEntry);
 		}
-		if(schedulingEntryPros != null){
-			for(SchedulingEntryPro oldEntry : schedulingEntryPros){
-				boolean exists = false;
-				for(SchedulingEntryPro newEntry : newSchedulingEntryPros){
-					if(newEntry.getKey().equals(oldEntry.getKey())){
-						exists = true;
-						break;
-					}
+		
+		for(int i = 0; i < Math.max(newSchedulingEntryPros.size(), schedulingEntryPros.size()); i++){
+			SchedulingEntryPro toSave = new SchedulingEntryPro();
+			if(i < newSchedulingEntryPros.size()){
+				toSave = newSchedulingEntryPros.get(i);
+				if(i < schedulingEntryPros.size()){
+					toSave.setId(schedulingEntryPros.get(i).getId());					
 				}
-				if(!exists){
-					oldEntry.setActive(false);
-					schedulingClient.upsert(oldEntry);				
-				}
+			} else {
+				toSave = schedulingEntryPros.get(i); 
+				toSave.setActive(false);
 			}
+			schedulingClient.upsert(toSave);
 		}
+//		for(SchedulingEntryPro newEntry : newSchedulingEntryPros){
+//			if(schedulingEntryPros != null){		
+//				for(SchedulingEntryPro oldEntry : schedulingEntryPros){
+//					if(newEntry.getKey().equals(oldEntry.getKey())){
+//						newEntry.setId(oldEntry.getId());
+//						break;
+//					}
+//				}
+//			}
+//			schedulingClient.upsert(newEntry);
+//		}
+//		if(schedulingEntryPros != null){
+//			for(SchedulingEntryPro oldEntry : schedulingEntryPros){
+//				boolean exists = false;
+//				for(SchedulingEntryPro newEntry : newSchedulingEntryPros){
+//					if(newEntry.getKey().equals(oldEntry.getKey())){
+//						exists = true;
+//						break;
+//					}
+//				}
+//				if(!exists){
+//					oldEntry.setActive(false);
+//					schedulingClient.upsert(oldEntry);				
+//				}
+//			}
+//		}
 	}
 	
 	@Override
